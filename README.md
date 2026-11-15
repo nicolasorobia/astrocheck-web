@@ -1,10 +1,10 @@
-# BioBeacon
+﻿# BioBeacon
 
 **An astronaut health-monitoring simulation built for the 2026 NASA Space Apps Challenge, connected to a real ESP32 sensor kit.**
 
 Team: **Unartificial Intelligence**
 
-### ▶ [Launch the simulation in your browser](https://nicolasorobia.github.io/astrocheck-web/)
+### ▶ [Launch the simulation in your browser](https://nicolasorobia.github.io/biobeacon-web/)
 
 > Works best in a recent version of Chrome, Edge or Firefox on a desktop or laptop. The first load downloads about 100 MB, so give it a moment while the system boots.
 >
