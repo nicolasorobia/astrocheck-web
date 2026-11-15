@@ -1,4 +1,4 @@
-﻿# BioBeacon
+# BioBeacon
 
 **An astronaut health-monitoring simulation built for the 2026 NASA Space Apps Challenge, connected to a real ESP32 sensor kit.**
 
@@ -23,7 +23,7 @@ The goal of the project is to show how continuous biometric monitoring could hel
 ## Features
 
 - **Live biometrics dashboard**: heart rate, blood oxygen (SpO2), suit CO2, suit pressure, core body temperature, respiration, O2 tank, stamina, radiation dose, bone density, sleep score and stress score. The values are based on published NASA research ranges.
-- **Real sensor input**: with ESP32 Sensor Mode on, the suit CO2 reading comes from a real CO2 sensor instead of the simulation.
+- **Real sensor input**: with ESP32 Sensor Mode on, heart rate, blood oxygen, skin temperature, CO2 and suit pressure come from real sensors on our ESP32 kit instead of the simulation.
 - **Connected physiology**: the readings affect each other.
   - Poor sleep and high stress make you breathe harder and burn more oxygen.
   - Sprinting drains stamina and O2 faster.
@@ -53,25 +53,26 @@ The goal of the project is to show how continuous biometric monitoring could hel
 | F | Flashlight |
 | Tab | Mission Control: live biometrics, stats and settings |
 | Right mouse (hold) | Look around while Mission Control is open |
+| F11 | Full screen on / off |
+| 1 – 5, ← → | Switch the ESP32 kit's screen page (Windows version, kit connected) |
 
 ---
 
 ## ESP32 sensor kit
 
-BioBeacon can read live data from a wearable-style sensor kit built around an ESP32. In our demo, the kit's **CO2 sensor** drives the astronaut's **suit CO2** in the game: breathe on the sensor and the value on the kit's screen and in Mission Control rise together.
+BioBeacon can read live data from a wearable-style sensor kit built around an ESP32. With **ESP32 Sensor Mode** on, the kit's readings replace the simulated ones in Mission Control and on the HUD. The kit's own screen shows the same numbers, in the same units, so the two can be compared side by side.
 
 ### Hardware
 
 | Part | What it measures / does | Connection |
 |---|---|---|
 | **ESP32 dev board** (CP2102 USB-to-serial) | Runs the firmware, reads every sensor, sends the data to the PC over USB | USB to the PC |
-| **Sensirion SCD41** | CO2 (ppm), plus air temperature and humidity | I2C, address 0x62 |
-| **MLX90614** infrared thermometer | Contact-free skin temperature | I2C, address 0x5A |
 | **MAX30102** pulse oximeter | Heart rate and blood oxygen (SpO2) | I2C, address 0x57 |
+| **MLX90614** infrared thermometer | Contact-free skin temperature | I2C, address 0x5A |
 | **MPU6050** (GY-521) accelerometer and gyroscope | Movement, activity and impact detection | I2C, address 0x68 |
-| **BME280 / BMP280** | Air pressure (and humidity on the BME280) | I2C, address 0x76 |
-| **1.8" ST7735 TFT** (128 × 160) | On-kit display: sensor pages and alerts | SPI |
-| **2 push buttons** | Next and Select for the on-kit menu | GPIO 32 and 33 to GND |
+| **BME280 / BMP280** | Air pressure, shown as suit pressure in the game (and humidity on the BME280) | I2C, address 0x76 |
+| **Sensirion SCD41** | CO2 (ppm), plus air temperature and humidity | I2C, address 0x62 |
+| **1.8" ST7735 TFT** (128 × 160) | On-kit display with one page per sensor | SPI |
 | Breadboard, jumper wires, USB cable | Wiring and power | |
 
 ### Wiring
@@ -81,14 +82,12 @@ BioBeacon can read live data from a wearable-style sensor kit built around an ES
 | I2C SDA (all sensors) | GPIO 25 |
 | I2C SCL (all sensors) | GPIO 26 |
 | TFT CS | GPIO 4 |
-| TFT DC (A0) | GPIO 5 |
+| TFT DC (A0 / RS) | GPIO 5 |
 | TFT RST | GPIO 15 |
 | TFT SDA / MOSI | GPIO 23 |
 | TFT SCK | GPIO 18 |
-| Next button | GPIO 32 |
-| Select button | GPIO 33 |
 
-All five sensors share one I2C bus at 100 kHz. The buttons use the ESP32's internal pull-ups, so each one just connects its pin to GND when pressed.
+All five sensors share one I2C bus at 100 kHz.
 
 ### How it works
 
@@ -98,51 +97,67 @@ All five sensors share one I2C bus at 100 kHz. The buttons use the ESP32's inter
                     └──SPI──► TFT screen
 ```
 
-1. **Firmware (Arduino, C++)**: the ESP32 samples every sensor and runs each one's own measuring routine. For example, the SCD41 produces a new CO2 reading every 5 seconds, and the MLX90614 waits for a steady target, settles, then reports the median of about 50 readings. Ten times a second it prints one JSON line over USB:
+1. **Firmware (Arduino, C++)**: on start-up the TFT plays a short launch animation. After that, the ESP32 samples every sensor and runs each one's own measuring routine. For example:
+   - the MAX30102 waits for a steady finger, warms up, then reports the median of a 30-second window
+   - the MLX90614 waits for a steady target, settles, then reports the median of about 50 readings
+   - the SCD41 produces a new CO2 reading every 5 seconds
+
+   Ten times a second the firmware prints one JSON line over USB:
    ```json
-   {"t_ms":2275931, "hr_bpm":null, "spo2_pct":null, "skin_temp_c":25.1, "accel_g":0.99,
-    "co2_ppm":701, "co2_mmhg":0.533, "cabin_temp_c":25.2, "humidity_pct":55, "pressure_hpa":1000.8}
+   {"t_ms":5000, "hr_bpm":72, "spo2_pct":98, "skin_temp_c":33.6, "accel_g":1.00,
+    "co2_ppm":701, "cabin_temp_c":24.1, "humidity_pct":48, "pressure_hpa":1009.6}
    ```
-   `null` means that sensor doesn't have a result yet. Lines starting with `#` are diagnostics.
+   `null` means that sensor doesn't have a result right now (no finger on it, still measuring, and so on). Lines starting with `#` are diagnostics.
 2. **Bridge**: Godot can't open a COM port on its own. When **Settings → ESP32 Sensor Mode** is switched on, the game starts a small hidden PowerShell helper (built into Windows, nothing to install). The helper:
    - checks the USB serial ports (skipping Bluetooth ones)
    - recognises the kit by its JSON lines
-   - forwards each line to the game over UDP on this PC only (127.0.0.1)
+   - forwards each line to the game over UDP on the same PC (127.0.0.1)
+   - passes the game's page keys back to the kit
    - closes by itself when the game exits
-3. **Game**: while fresh data keeps arriving, the live SCD41 value replaces the simulated suit CO2 on the Mission Control card and the on-screen HUD, labelled **ESP32**. CO2 is shown as a partial pressure in mmHg (ppm × 760 / 1,000,000, at sea-level pressure), the same unit the kit's screen uses. If the kit is unplugged, the game says SIGNAL LOST and goes back to the simulated value.
+3. **Game**: while fresh data keeps arriving, each live reading replaces its simulated value and is labelled **ESP32**. The game uses the same units, rounding and normal / caution / alert thresholds as the kit's screen. When a sensor has no result yet, the game shows dashes and **MEASURING**, just like the TFT. If the kit is unplugged, the game says SIGNAL LOST and goes back to the simulated values.
 
 The Settings page shows the link status: **SEARCHING FOR DEVICE**, **CONNECTED · COMx**, or **BUSY** if another program (like the Arduino Serial Monitor) is already using the port.
 
-### Demo mode
+### Switching the kit's screen
 
-For the presentation we set the firmware to `CO2_ONLY`. In this mode:
-- the TFT shows just the CO2 value, in large digits, in mmHg
-- the on-kit menu and other sensor pages are hidden
-- only a high-CO2 alert can take over the screen
+The kit's TFT has one page per sensor. While the game is connected, you can switch pages from inside the game, without touching the kit:
 
-This makes it easy to compare the kit and the game side by side. Every sensor keeps running and streaming in the background.
+| Key | TFT page |
+|---|---|
+| **1** | Heart rate / blood oxygen |
+| **2** | Skin temperature |
+| **3** | Motion |
+| **4** | Pressure |
+| **5** | Air quality (CO2) |
+| **→** / **←** | Next / previous page |
+
+Without the game, the same keys work from the Arduino Serial Monitor (1–5, and A / D for next / previous).
 
 ### Sensor status
 
-| Sensor | Status |
-|---|---|
-| SCD41 CO2 | ✅ Live in the game (suit CO2) and on the kit's screen |
-| MLX90614 skin temperature | Working on the kit. It needs the skin held still about 1 cm away for about 25 seconds per reading, so we kept the in-game body temperature simulated for the demo |
-| MAX30102, MPU6050, BME280 | Wired and streaming from the kit, not yet used by the game |
+| Sensor | In the game | Notes |
+|---|---|---|
+| MAX30102 heart rate and SpO2 | ✅ Live | Finger on the sensor for about 1 minute per reading |
+| MLX90614 skin temperature | ✅ Live (replaces core temperature) | Skin held still about 1 cm away for about 25 seconds per reading |
+| SCD41 CO2 | ✅ Live, in ppm (mmHg also shown) | New reading every 5 seconds |
+| BME280 pressure | ✅ Live as suit pressure, in hPa (psi also shown) | Normal range 980–1040 hPa |
+
+The live values are shown on screen only. The astronaut's simulation and its warnings keep running on their own numbers.
 
 ### Limits
 
 - **Not a medical device.** This is a hackathon prototype, and the alert thresholds are for demonstration only.
 - The CO2 value is the carbon dioxide in the surrounding air, not the CO2 in a person's blood.
+- The suit pressure value comes from the surrounding air pressure, which stands in for a real spacesuit's pressure in this demo.
 - The sensor link only works in the **Windows version** of BioBeacon. Browsers can't open USB serial ports from the game, so the web version always runs simulated.
 - Only one program can use the kit's COM port at a time. Close the Arduino Serial Monitor before turning on ESP32 Sensor Mode.
 
 ### Arduino libraries used
 
 - Adafruit GFX and Adafruit ST7735 (display)
-- Adafruit MPU6050 and Adafruit Unified Sensor
 - Adafruit MLX90614
-- SparkFun MAX3010x (MAX30105 driver and `spo2_algorithm`)
+- Adafruit MPU6050 and Adafruit Unified Sensor
+- SparkFun MAX3010x 1.1.2 (driver and `spo2_algorithm`, bundled with the sketch)
 - The SCD41 and BME280 / BMP280 are read with direct I2C commands (the `Wire` library), with no extra library.
 
 ---
