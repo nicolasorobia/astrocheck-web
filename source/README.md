@@ -17,7 +17,6 @@ These packs were purchased, and their licenses don't allow sharing the raw files
 |---|---|---|
 | ShockFrame Sci-Fi Game UI by Ultra-Knight | [itch.io](https://ultra-knight.itch.io/sci-fi-game-ui-asset-pack-shockframe) | `assets/HUD/sci-fi - ShockFrame/` |
 | Astronaut Modular Low Poly Stylized by agor2012 (the player's astronaut, `Astronaut_A.fbx`) | [itch.io](https://agor2012.itch.io/astronaut-modular-low-poly-stylized) | `assets/Astronaut/FAB/` |
-| Astronaut Spacesuit (Rigged & Animated), optional | FAB marketplace | `assets/Astronaut/FAB/` |
 
 Everything else (NASA 3D Resources models, Poly Haven rocks, Freesound audio) is included, with credits in the main README.
 
