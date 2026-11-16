@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://tools/rake.obj" id="1_mesh"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_rake"]
+disable_receive_shadows = true
+albedo_color = Color(0.78, 0.79, 0.8, 1)
+metallic = 0.4
+roughness = 0.45
+
+[node name="rake" type="Node3D"]
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.32909, 0.00000, 0.19000, 0.16454, 0.19000, -0.28500, -0.09500, 0.32909, 0.16454, 0, 0, 0)
+material_override = SubResource("Mat_rake")
+mesh = ExtResource("1_mesh")

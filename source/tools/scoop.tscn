@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://tools/scoop.obj" id="1_mesh"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_scoop"]
+disable_receive_shadows = true
+albedo_color = Color(0.78, 0.79, 0.8, 1)
+metallic = 0.4
+roughness = 0.45
+
+[node name="scoop" type="Node3D"]
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.57569, 0.08535, 0.14594, 0.01801, 0.48402, -0.35411, -0.16810, 0.34415, 0.46185, 0, 0, 0)
+material_override = SubResource("Mat_scoop")
+mesh = ExtResource("1_mesh")

@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://rd4yvorx30m1"]
+
+[ext_resource type="Script" uid="uid://bw7p6jhj15m4d" path="res://props/landmark.gd" id="1_landmark"]
+[ext_resource type="PackedScene" uid="uid://bfkwjectr7i5c" path="res://assets/70 meter dish.glb" id="2_dish"]
+
+[node name="CommDish" type="StaticBody3D" unique_id=1023954434]
+script = ExtResource("1_landmark")
+target_height = 6.0
+sink = 2.0
+clear_radius = 6.0
+
+[node name="Model" parent="." unique_id=1450360508 instance=ExtResource("2_dish")]
+transform = Transform3D(0.07014366, 0, 0, 0, 0.07014366, 0, 0, 0, 0.07014366, 0, 0, 0)

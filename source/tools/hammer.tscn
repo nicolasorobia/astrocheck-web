@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://tools/hammer.obj" id="1_mesh"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_hammer"]
+disable_receive_shadows = true
+albedo_color = Color(0.62, 0.63, 0.66, 1)
+metallic = 0.25
+roughness = 0.4
+
+[node name="hammer" type="Node3D"]
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.59451, 0.05311, 0.06109, 0.04034, 0.19822, -0.56487, -0.07019, 0.56382, 0.19284, 0, 0, 0)
+material_override = SubResource("Mat_hammer")
+mesh = ExtResource("1_mesh")

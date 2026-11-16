@@ -1,0 +1,20 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://interactables/habitat.tscn" id="1_hab"]
+[ext_resource type="Script" uid="uid://bbxc3n0ngcxqx" path="res://props/beacon.gd" id="2_beacon"]
+
+[node name="Outpost" instance=ExtResource("1_hab")]
+display_name = "Outpost"
+target_length = 8.0
+sink = 0.4
+is_main_base = false
+clear_radius = 7.0
+action_name = "rest and refill O2"
+rest_text = "Resting at the outpost… refilling O2"
+
+[node name="Model" parent="." index="0"]
+transform = Transform3D(0.021041662, 0, 0, 0, 0.021041662, 0, 0, 0, 0.021041662, -1.0066741, -0.6, 0.0001)
+
+[node name="Beacon" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, 1.5)
+script = ExtResource("2_beacon")

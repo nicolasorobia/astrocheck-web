@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://c8tfnxky0ll8q"]
+
+[ext_resource type="ArrayMesh" uid="uid://cqae63da3gcln" path="res://tools/sample_container.obj" id="1_mesh"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_plastic"]
+disable_receive_shadows = true
+albedo_color = Color(0.92, 0.93, 0.95, 1)
+roughness = 0.55
+
+[node name="sample_container" type="Node3D" unique_id=1333357702]
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=1487484330]
+transform = Transform3D(1.2216, 0, 0.44463, -0.44463, 0, 1.2216, 0, -1.3, 0, 0, 0, 0)
+material_override = SubResource("Mat_plastic")
+mesh = ExtResource("1_mesh")

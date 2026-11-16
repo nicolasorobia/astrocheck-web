@@ -1,0 +1,21 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://terrain/terrain.gd" id="1_terrain"]
+[ext_resource type="HeightMapShape3D" path="res://terrain/apollo17_heightmap.tres" id="2_height"]
+[ext_resource type="Shader" path="res://shaders/lunar_terrain.gdshader" id="3_shader"]
+[ext_resource type="Texture2D" uid="uid://ciqh0h7pfp4un" path="res://assets/textures/moon_meteor_01_diff_4k.jpg" id="4_albedo"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ground"]
+shader = ExtResource("3_shader")
+shader_parameter/albedo_tex = ExtResource("4_albedo")
+shader_parameter/tile_size = 4.0
+shader_parameter/macro_size = 47.0
+shader_parameter/macro_strength = 0.35
+shader_parameter/slope_darken = 0.3
+shader_parameter/normal_strength = 1.0
+shader_parameter/tint = Color(1, 1, 1, 1)
+
+[node name="Terrain" type="StaticBody3D"]
+script = ExtResource("1_terrain")
+heightmap = ExtResource("2_height")
+material = SubResource("ShaderMaterial_ground")

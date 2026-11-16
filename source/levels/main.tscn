@@ -1,0 +1,211 @@
+[gd_scene format=3 uid="uid://rtynbkqrshis"]
+
+[ext_resource type="PackedScene" uid="uid://dnp8s1y5olj3h" path="res://player/player.tscn" id="1_2262g"]
+[ext_resource type="PackedScene" uid="uid://dp7v165hhrkhd" path="res://assets/ApolloLunarModule/ApolloLunarModule_.glb" id="2_lander"]
+[ext_resource type="Shader" uid="uid://da0o3ysdf04fh" path="res://shaders/space_sky.gdshader" id="3_spacesky"]
+[ext_resource type="PackedScene" path="res://interactables/sample_rock.tscn" id="4_rock"]
+[ext_resource type="PackedScene" path="res://interactables/rover.tscn" id="5_site"]
+[ext_resource type="PackedScene" path="res://terrain/terrain.tscn" id="6_terrain"]
+[ext_resource type="Script" uid="uid://bcy2xw2ytgnno" path="res://terrain/rock_scatter.gd" id="7_scatter"]
+[ext_resource type="PackedScene" uid="uid://ony0dn1ofvx8" path="res://assets/rocks/moon_rock_01_4k.gltf/moon_rock_01_4k.gltf" id="8_rock01"]
+[ext_resource type="PackedScene" uid="uid://2i5mi4odbjr" path="res://assets/rocks/moon_rock_04_4k.gltf/moon_rock_04_4k.gltf" id="8_rock04"]
+[ext_resource type="PackedScene" uid="uid://dh5cndprc8pj7" path="res://assets/rocks/moon_rock_05_4k.gltf/moon_rock_05_4k.gltf" id="8_rock05"]
+[ext_resource type="PackedScene" uid="uid://c4d2q4nyet8fk" path="res://assets/rocks/moon_rock_07_4k.gltf/moon_rock_07_4k.gltf" id="8_rock07"]
+[ext_resource type="PackedScene" path="res://interactables/habitat.tscn" id="9_hab"]
+[ext_resource type="PackedScene" uid="uid://rd4yvorx30m1" path="res://props/comm_dish.tscn" id="10_dish"]
+[ext_resource type="PackedScene" path="res://interactables/flag.tscn" id="11_flag"]
+[ext_resource type="Script" uid="uid://cun4kny62stmt" path="res://audio/ambient_loop.gd" id="12_amb"]
+[ext_resource type="AudioStream" uid="uid://dlmck0t155f1o" path="res://assets/audio/background.wav" id="13_bg"]
+[ext_resource type="Script" uid="uid://yn0p5epjgxnx" path="res://terrain/pressure_zone.gd" id="14_pz"]
+[ext_resource type="PackedScene" path="res://interactables/outpost.tscn" id="15_out"]
+[ext_resource type="Script" uid="uid://bda5rgvuvxyb2" path="res://terrain/radiation_zone.gd" id="16_rz"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_spacesky"]
+shader = ExtResource("3_spacesky")
+shader_parameter/star_density = 0.03
+shader_parameter/star_scale = 350.0
+shader_parameter/star_brightness = 2.5
+shader_parameter/earth_direction = Vector3(0.4, 0.35, -0.85)
+shader_parameter/earth_size = 0.035
+shader_parameter/earth_color = Color(0.15, 0.4, 0.9, 1)
+shader_parameter/sun_size = 0.0025
+
+[sub_resource type="Sky" id="Sky_wdj6m"]
+sky_material = SubResource("ShaderMaterial_spacesky")
+
+[sub_resource type="Environment" id="Environment_l8qe7"]
+background_mode = 2
+sky = SubResource("Sky_wdj6m")
+ambient_light_source = 2
+ambient_light_color = Color(0.05, 0.05, 0.06, 1)
+ambient_light_sky_contribution = 0.0
+ambient_light_energy = 0.5
+tonemap_mode = 4
+glow_enabled = true
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_descent"]
+size = Vector3(3.02, 2.33, 3.02)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ascent"]
+size = Vector3(3.03, 2.2, 3.09)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_footpad"]
+height = 0.6
+radius = 0.4
+
+[node name="main" type="Node3D" unique_id=415755585]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1605151840]
+environment = SubResource("Environment_l8qe7")
+
+[node name="Terrain" parent="." unique_id=1800000001 instance=ExtResource("6_terrain")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -14.486, 0)
+
+[node name="RockScatter" type="Node3D" parent="." unique_id=1800000002]
+script = ExtResource("7_scatter")
+rock_scenes = Array[PackedScene]([ExtResource("8_rock01"), ExtResource("8_rock04"), ExtResource("8_rock05"), ExtResource("8_rock07")])
+
+[node name="player" parent="." unique_id=2110708453 instance=ExtResource("1_2262g")]
+transform = Transform3D(-0.9936002, 0, -0.11295447, 0, 1, 0, 0.11295447, 0, -0.9936002, 3.3573217, 1.4415386, -6.276128)
+
+[node name="ApolloLunarModule" type="StaticBody3D" parent="." unique_id=1500000001]
+transform = Transform3D(0.7369613, 0, -0.675935, 0, 1, 0, 0.675935, 0, 0.7369613, 9.297527, 0.4, -9)
+
+[node name="Model" parent="ApolloLunarModule" unique_id=1500000002 instance=ExtResource("2_lander")]
+
+[node name="DescentStage" type="CollisionShape3D" parent="ApolloLunarModule" unique_id=1500000003]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.27, 0)
+shape = SubResource("BoxShape3D_descent")
+
+[node name="AscentStage" type="CollisionShape3D" parent="ApolloLunarModule" unique_id=1500000004]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.255, 3.53, 0.055)
+shape = SubResource("BoxShape3D_ascent")
+
+[node name="FootpadFront" type="CollisionShape3D" parent="ApolloLunarModule" unique_id=1500000005]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 2.86)
+shape = SubResource("CylinderShape3D_footpad")
+
+[node name="FootpadBack" type="CollisionShape3D" parent="ApolloLunarModule" unique_id=1500000006]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, -2.86)
+shape = SubResource("CylinderShape3D_footpad")
+
+[node name="FootpadLeft" type="CollisionShape3D" parent="ApolloLunarModule" unique_id=1500000007]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.86, 0.4, 0)
+shape = SubResource("CylinderShape3D_footpad")
+
+[node name="FootpadRight" type="CollisionShape3D" parent="ApolloLunarModule" unique_id=1500000008]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.86, 0.4, 0)
+shape = SubResource("CylinderShape3D_footpad")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=248204932]
+transform = Transform3D(1, 0, 0, 0, 0.96680677, 0.2555087, 0, -0.2555087, 0.96680677, 0, 11.2122555, 10.763476)
+light_energy = 2.0
+shadow_enabled = true
+
+[node name="Rover" parent="." unique_id=1700000003 instance=ExtResource("5_site")]
+transform = Transform3D(0.516892, 0, -0.856025, 0, 1, 0, 0.856025, 0, 0.516892, 15.515008, 0, 7.212316)
+duration = 30.0
+
+[node name="CommDish" parent="." unique_id=1700000005 instance=ExtResource("10_dish")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.555855, -0.068710804, -15.328817)
+
+[node name="Habitat" parent="." unique_id=1700000004 instance=ExtResource("9_hab")]
+transform = Transform3D(0.37617186, 0, 0.9265499, 0, 1, 0, -0.9265499, 0, 0.37617186, -19.727571, 0, -2.3272915)
+
+[node name="Ambience" type="AudioStreamPlayer" parent="." unique_id=1700000007]
+stream = ExtResource("13_bg")
+volume_db = -10.0
+script = ExtResource("12_amb")
+
+[node name="Flag" parent="." unique_id=1700000006 instance=ExtResource("11_flag")]
+transform = Transform3D(-0.99655575, 0, -0.0829262, 0, 1, 0, 0.0829262, 0, -0.99655575, 4.4279823, 0, 2.9960384)
+
+[node name="SampleRock1" parent="." unique_id=1700000101 instance=ExtResource("4_rock")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 9)
+
+[node name="SampleRock2" parent="." unique_id=1700000102 instance=ExtResource("4_rock")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38, 0, -42)
+
+[node name="SampleRock3" parent="." unique_id=1700000103 instance=ExtResource("4_rock")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 0, -31)
+
+[node name="SampleRock4" parent="." unique_id=1700000105 instance=ExtResource("4_rock")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 118, 0, 92)
+
+[node name="SampleRock5" parent="." unique_id=1700000106 instance=ExtResource("4_rock")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -152, 0, -138)
+
+[node name="SampleRock6" parent="." unique_id=1700000107 instance=ExtResource("4_rock")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41, 0, 172)
+
+[node name="SampleRock7" parent="." unique_id=1700000108 instance=ExtResource("4_rock")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 205, 0, -176)
+
+[node name="SampleRock8" parent="." unique_id=1700000110 instance=ExtResource("4_rock")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -285, 0, 42)
+
+[node name="SampleRock9" parent="." unique_id=1700000112 instance=ExtResource("4_rock")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 301)
+
+[node name="SampleRock10" parent="." unique_id=1700000116 instance=ExtResource("4_rock")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 369, 0, 212)
+
+[node name="PressureZone1" type="Node3D" parent="." unique_id=1700000201]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -215, 0, 70)
+script = ExtResource("14_pz")
+
+[node name="PressureZone2" type="Node3D" parent="." unique_id=1700000202]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 165, 0, -96)
+script = ExtResource("14_pz")
+
+[node name="PressureZone3" type="Node3D" parent="." unique_id=1700000203]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0, 210)
+script = ExtResource("14_pz")
+
+[node name="PressureZone4" type="Node3D" parent="." unique_id=1700000204]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 209, 0, 75)
+script = ExtResource("14_pz")
+
+[node name="Outpost1" parent="." unique_id=1700000301 instance=ExtResource("15_out")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -166, 0, -104)
+
+[node name="Outpost3" parent="." unique_id=1700000303 instance=ExtResource("15_out")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -325, 0, 14)
+
+[node name="Outpost4" parent="." unique_id=1700000304 instance=ExtResource("15_out")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 90, 0, 123)
+
+[node name="Outpost6" parent="." unique_id=1700000306 instance=ExtResource("15_out")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 200, 0, 143)
+
+[node name="Outpost7" parent="." unique_id=1700000307 instance=ExtResource("15_out")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 362, 0, 177)
+
+[node name="Outpost8" parent="." unique_id=1700000308 instance=ExtResource("15_out")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0, 285)
+
+[node name="Outpost11" parent="." unique_id=1700000311 instance=ExtResource("15_out")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 71, 0, -155)
+
+[node name="Outpost12" parent="." unique_id=1700000312 instance=ExtResource("15_out")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 239, 0, -166)
+
+[node name="RadiationZone1" type="Node3D" parent="." unique_id=1700000401]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -336, 0, -41)
+script = ExtResource("16_rz")
+
+[node name="RadiationZone2" type="Node3D" parent="." unique_id=1700000402]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, 94)
+script = ExtResource("16_rz")
+
+[node name="RadiationZone3" type="Node3D" parent="." unique_id=1700000403]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 300, 0, 238)
+script = ExtResource("16_rz")
+
+[node name="RadiationZone4" type="Node3D" parent="." unique_id=1700000404]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -117, 0, -33)
+script = ExtResource("16_rz")
+
+[node name="RadiationZone5" type="Node3D" parent="." unique_id=1700000405]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 0, 353)
+script = ExtResource("16_rz")

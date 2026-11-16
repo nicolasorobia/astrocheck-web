@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://dxsd8gmb78ll2"]
+
+[ext_resource type="ArrayMesh" uid="uid://bi6x4133wkh53" path="res://tools/wrench.obj" id="1_mesh"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_metal"]
+disable_receive_shadows = true
+albedo_color = Color(0.72, 0.73, 0.75, 1)
+metallic = 0.4
+roughness = 0.35
+
+[node name="wrench" type="Node3D" unique_id=8208640]
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=214505598]
+transform = Transform3D(1.44889, 0, 0.38823, -0.19411, 1.29904, 0.72444, -0.33622, -0.75, 1.25477, 0, 0, 0)
+material_override = SubResource("Mat_metal")
+mesh = ExtResource("1_mesh")

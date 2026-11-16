@@ -1,0 +1,74 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://interactables/interactable.gd" id="1_inter"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_marker"]
+top_radius = 0.5
+bottom_radius = 0.5
+height = 0.02
+
+[sub_resource type="StandardMaterial3D" id="Mat_marker"]
+transparency = 1
+albedo_color = Color(0.67, 0.79, 0.96, 0.45)
+emission_enabled = true
+emission = Color(0.67, 0.79, 0.96, 1)
+emission_energy_multiplier = 0.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_base"]
+size = Vector3(0.45, 0.25, 0.45)
+
+[sub_resource type="StandardMaterial3D" id="Mat_foil"]
+albedo_color = Color(0.85, 0.7, 0.3, 1)
+metallic = 0.5
+roughness = 0.4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_mast"]
+top_radius = 0.015
+bottom_radius = 0.02
+height = 0.8
+
+[sub_resource type="StandardMaterial3D" id="Mat_white"]
+albedo_color = Color(0.92, 0.93, 0.94, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_dish"]
+top_radius = 0.18
+bottom_radius = 0.04
+height = 0.08
+
+[sub_resource type="BoxShape3D" id="BoxShape_site"]
+size = Vector3(1, 0.3, 1)
+
+[node name="InstrumentSite" type="StaticBody3D"]
+script = ExtResource("1_inter")
+action_name = "deploy the seismometer"
+complete_message = "Seismometer deployed"
+duration = 5.0
+tool = "wrench"
+reveal_on_complete = NodePath("Instrument")
+hide_on_complete = NodePath("Marker")
+
+[node name="Marker" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0)
+mesh = SubResource("CylinderMesh_marker")
+material_override = SubResource("Mat_marker")
+
+[node name="Instrument" type="Node3D" parent="."]
+
+[node name="Base" type="MeshInstance3D" parent="Instrument"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 0)
+mesh = SubResource("BoxMesh_base")
+material_override = SubResource("Mat_foil")
+
+[node name="Mast" type="MeshInstance3D" parent="Instrument"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.65, 0.15)
+mesh = SubResource("CylinderMesh_mast")
+material_override = SubResource("Mat_white")
+
+[node name="Dish" type="MeshInstance3D" parent="Instrument"]
+transform = Transform3D(0.866, -0.5, 0, 0.5, 0.866, 0, 0, 0, 1, 0.15, 1.05, 0.15)
+mesh = SubResource("CylinderMesh_dish")
+material_override = SubResource("Mat_white")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+shape = SubResource("BoxShape_site")

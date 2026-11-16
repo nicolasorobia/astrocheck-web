@@ -1,0 +1,76 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://interactables/flag.gd" id="1_flag"]
+[ext_resource type="Shader" path="res://shaders/flag.gdshader" id="2_shader"]
+[ext_resource type="Texture2D" uid="uid://ceua6we0s54pc" path="res://assets/Space_Apps_Logo.png" id="3_logo"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_pole"]
+albedo_color = Color(0.82, 0.83, 0.85, 1)
+metallic = 0.8
+roughness = 0.35
+
+[sub_resource type="CylinderMesh" id="Mesh_pole"]
+material = SubResource("Mat_pole")
+top_radius = 0.02
+bottom_radius = 0.022
+height = 2.5
+radial_segments = 12
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_bar"]
+material = SubResource("Mat_pole")
+top_radius = 0.012
+bottom_radius = 0.012
+height = 1.56
+radial_segments = 8
+rings = 1
+
+[sub_resource type="SphereMesh" id="Mesh_cap"]
+material = SubResource("Mat_pole")
+radius = 0.035
+height = 0.07
+radial_segments = 12
+rings = 6
+
+[sub_resource type="ShaderMaterial" id="Mat_cloth"]
+render_priority = 0
+shader = ExtResource("2_shader")
+shader_parameter/logo = ExtResource("3_logo")
+shader_parameter/cloth_color = Color(0.035, 0.075, 0.2, 1)
+shader_parameter/logo_rect = Vector4(0.08, 0.255, 0.84, 0.49)
+shader_parameter/wrinkle_depth = 0.035
+
+[sub_resource type="QuadMesh" id="Mesh_cloth"]
+material = SubResource("Mat_cloth")
+size = Vector2(1.5, 1)
+subdivide_width = 30
+subdivide_depth = 20
+
+[sub_resource type="BoxShape3D" id="Box_flag"]
+size = Vector3(1.7, 2.3, 0.35)
+
+[node name="Flag" type="StaticBody3D"]
+script = ExtResource("1_flag")
+display_name = "Team flag"
+action_name = "view message"
+duration = 0.0
+
+[node name="Pole" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
+mesh = SubResource("Mesh_pole")
+
+[node name="Cap" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.52, 0)
+mesh = SubResource("Mesh_cap")
+
+[node name="Crossbar" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0.78, 2.4, 0)
+mesh = SubResource("Mesh_bar")
+
+[node name="Cloth" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.77, 1.89, 0)
+mesh = SubResource("Mesh_cloth")
+
+[node name="Collision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 1.4, 0)
+shape = SubResource("Box_flag")

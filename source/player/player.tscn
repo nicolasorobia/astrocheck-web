@@ -1,0 +1,81 @@
+[gd_scene format=3 uid="uid://dnp8s1y5olj3h"]
+
+[ext_resource type="Script" uid="uid://w7yts7h06gwd" path="res://player/scripts/player.gd" id="1_rkbax"]
+[ext_resource type="Script" uid="uid://c8lr3dhjfly58" path="res://player/scripts/fp_cam.gd" id="2_rkbax"]
+[ext_resource type="PackedScene" uid="uid://hj853h5d16ma" path="res://assets/Astronaut/FAB/Astronaut_A.fbx" id="3_astro"]
+[ext_resource type="Script" uid="uid://ipbw34kyvakd" path="res://player/scripts/astronaut_body.gd" id="4_body"]
+[ext_resource type="Script" uid="uid://dy75256sf1f7s" path="res://player/scripts/interactor.gd" id="5_interact"]
+[ext_resource type="Script" uid="uid://dlri3chhmqnws" path="res://ui/compass_hud.gd" id="6_compass"]
+[ext_resource type="Script" uid="uid://cjliprvfcqn72" path="res://player/scripts/vitals.gd" id="7_vitals"]
+[ext_resource type="Script" uid="uid://btaj1pf6tkit1" path="res://ui/vitals_hud.gd" id="8_vhud"]
+[ext_resource type="Script" uid="uid://cu2cm5xwjhlkj" path="res://player/scripts/flashlight.gd" id="9_flash"]
+[ext_resource type="Script" uid="uid://cwbe7wkh7blf4" path="res://player/scripts/footsteps.gd" id="10_steps"]
+[ext_resource type="Script" uid="uid://c0v0npk2gv0u" path="res://ui/pause_menu.gd" id="11_pause"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_m64yi"]
+
+[node name="player" type="CharacterBody3D" unique_id=2110708453]
+script = ExtResource("1_rkbax")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=980381760]
+shape = SubResource("CapsuleShape3D_m64yi")
+
+[node name="Body" type="Node3D" parent="." unique_id=731904562]
+script = ExtResource("4_body")
+
+[node name="Model" parent="Body" unique_id=1288453017 instance=ExtResource("3_astro")]
+
+[node name="head" type="Node3D" parent="." unique_id=1448589188]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.707492, 0)
+script = ExtResource("2_rkbax")
+
+[node name="Camera3D" type="Camera3D" parent="head" unique_id=1816586237]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.10864031)
+cull_mask = 1048573
+
+[node name="Interactor" type="RayCast3D" parent="head/Camera3D" unique_id=902117345]
+target_position = Vector3(0, 0, -3)
+script = ExtResource("5_interact")
+
+[node name="Flashlight" type="SpotLight3D" parent="head/Camera3D" unique_id=902117350]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.06, 0)
+light_color = Color(0.93, 0.96, 1, 1)
+light_energy = 6.0
+shadow_enabled = true
+spot_range = 35.0
+spot_attenuation = 0.8
+spot_angle = 26.0
+spot_angle_attenuation = 1.6
+script = ExtResource("9_flash")
+
+[node name="Footsteps" type="Node" parent="." unique_id=902117351]
+script = ExtResource("10_steps")
+volume_db = -2.0
+
+[node name="Vitals" type="Node" parent="." unique_id=902117348]
+script = ExtResource("7_vitals")
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=902117346]
+
+[node name="Compass" type="Control" parent="HUD" unique_id=902117347]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("6_compass")
+
+[node name="VitalsHUD" type="Control" parent="HUD" unique_id=902117349]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("8_vhud")
+
+[node name="PauseMenu" type="CanvasLayer" parent="." unique_id=902117360]
+script = ExtResource("11_pause")

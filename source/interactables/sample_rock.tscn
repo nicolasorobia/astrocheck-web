@@ -1,0 +1,48 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://interactables/sample_rock.gd" id="1_rock"]
+[ext_resource type="Script" path="res://interactables/interaction_step.gd" id="2_step"]
+[ext_resource type="Shader" path="res://shaders/interact_highlight.gdshader" id="3_glow"]
+[ext_resource type="PackedScene" uid="uid://ony0dn1ofvx8" path="res://assets/rocks/moon_rock_01_4k.gltf/moon_rock_01_4k.gltf" id="4_r01"]
+[ext_resource type="PackedScene" uid="uid://2i5mi4odbjr" path="res://assets/rocks/moon_rock_04_4k.gltf/moon_rock_04_4k.gltf" id="4_r04"]
+[ext_resource type="PackedScene" uid="uid://dh5cndprc8pj7" path="res://assets/rocks/moon_rock_05_4k.gltf/moon_rock_05_4k.gltf" id="4_r05"]
+[ext_resource type="PackedScene" uid="uid://c4d2q4nyet8fk" path="res://assets/rocks/moon_rock_07_4k.gltf/moon_rock_07_4k.gltf" id="4_r07"]
+
+[sub_resource type="Resource" id="Step_hammer"]
+script = ExtResource("2_step")
+action_name = "break the rock with the hammer"
+complete_message = "Rock broken"
+duration = 2.5
+tool = "hammer"
+
+[sub_resource type="Resource" id="Step_rake"]
+script = ExtResource("2_step")
+action_name = "rake the pebbles from the soil"
+complete_message = "Pebbles separated"
+duration = 3.0
+tool = "rake"
+
+[sub_resource type="Resource" id="Step_scoop"]
+script = ExtResource("2_step")
+action_name = "scoop up the sample"
+complete_message = "Sample scooped"
+duration = 2.5
+tool = "scoop"
+
+[sub_resource type="Resource" id="Step_container"]
+script = ExtResource("2_step")
+action_name = "seal the sample in the container"
+complete_message = "Sample sealed"
+duration = 2.0
+tool = "sample_container"
+
+[sub_resource type="ShaderMaterial" id="Mat_glow"]
+render_priority = 0
+shader = ExtResource("3_glow")
+
+[node name="SampleRock" type="StaticBody3D"]
+script = ExtResource("1_rock")
+rock_scenes = Array[PackedScene]([ExtResource("4_r01"), ExtResource("4_r04"), ExtResource("4_r05"), ExtResource("4_r07")])
+highlight = SubResource("Mat_glow")
+display_name = "Sample rock"
+steps = Array[ExtResource("2_step")]([SubResource("Step_hammer"), SubResource("Step_rake"), SubResource("Step_scoop"), SubResource("Step_container")])

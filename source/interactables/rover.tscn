@@ -1,0 +1,48 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://interactables/rover.gd" id="1_rover"]
+[ext_resource type="PackedScene" uid="uid://tde0ojc1yxgf" path="res://assets/rover/perseverance.glb" id="2_model"]
+
+[sub_resource type="TorusMesh" id="TorusMesh_ring"]
+inner_radius = 2.3
+outer_radius = 2.45
+rings = 48
+ring_segments = 6
+
+[sub_resource type="StandardMaterial3D" id="Mat_ring"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.2, 0.82, 1, 0.55)
+
+[sub_resource type="BoxShape3D" id="Box_body"]
+size = Vector3(2.5, 1.2, 3.0)
+
+[sub_resource type="BoxShape3D" id="Box_mast"]
+size = Vector3(0.5, 0.8, 0.5)
+
+[node name="Rover" type="StaticBody3D"]
+script = ExtResource("1_rover")
+display_name = "Perseverance rover"
+action_name = "repair the rover with the wrench"
+complete_message = "Rover repaired"
+duration = 300.0
+tool = "wrench"
+keep_progress = true
+exertion = 0.8
+hide_on_complete = NodePath("Marker")
+
+[node name="Model" parent="." instance=ExtResource("2_model")]
+
+[node name="Marker" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+cast_shadow = 0
+mesh = SubResource("TorusMesh_ring")
+material_override = SubResource("Mat_ring")
+
+[node name="Body" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, -0.18)
+shape = SubResource("Box_body")
+
+[node name="Mast" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -1.1)
+shape = SubResource("Box_mast")

@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://interactables/habitat.gd" id="1_hab"]
+[ext_resource type="PackedScene" uid="uid://coixkpee7x4e3" path="res://assets/habitat/habitat_part1.glb" id="2_model"]
+
+[node name="Habitat" type="StaticBody3D"]
+script = ExtResource("1_hab")
+display_name = "Habitat"
+target_length = 11.0
+action_name = "rest for the day"
+duration = 2.0
+single_use = false
+exertion = 0.0
+
+[node name="Model" parent="." instance=ExtResource("2_model")]
+transform = Transform3D(0.028932285, 0, 0, 0, 0.028932285, 0, 0, 0, 0.028932285, -1.3841769, -0.48344353, 0.00014193)
